@@ -1,1 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            text-align: center;
+            margin-top: 100px;
+        }
 
+        h1 {
+            margin-top: 100px;
+            font-size: 24px;
+        }
+
+        input {
+            margin-top: 30px;
+            width: 200px;
+            padding: 10px;
+        }
+
+        #message {
+            margin-top: 20px;
+            color: red; /* Set the color according to your design */
+        }
+    </style>
+    <title>Login Page</title>
+</head>
+<body>
+    <h1>Log In</h1>
+    <div>
+        <input type="password" id="passwordInput" placeholder="Enter your password">
+    </div>
+    <div id="message"></div>
+    <script>
+        document.getElementById('passwordInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                // You can modify this part based on your web framework to interact with the Python script
+                var userInput = document.getElementById('passwordInput').value;
+                if (userInput) {
+                    document.getElementById('message').innerText = "Checking password...";
+                    // You may want to use AJAX or another method to send the user input to the server-side Python script
+                    // For simplicity, you can directly execute the Python script with an XMLHttpRequest
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', '/check_password', true);  // Update the URL accordingly
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            var response = JSON.parse(xhr.responseText);
+                            document.getElementById('message').innerText = response.message;
+                        }
+                    };
+                    xhr.send(JSON.stringify({ password: userInput }));
+                }
+            }
+        });
+    </script>
+</body>
+</html>
