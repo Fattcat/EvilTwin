@@ -1,49 +1,55 @@
+<!-- templates/index.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
     <style>
         body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        #loginBox {
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #4CAF50;
+            color: #fff;
             text-align: center;
-            margin-top: 100px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
-
-        h1 {
-            margin-top: 100px;
-            font-size: 24px;
-        }
-
         input {
-            margin-top: 30px;
-            width: 200px;
             padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
         }
-
         #message {
-            margin-top: 20px;
-            color: red; /* Set the color according to your design */
+            font-size: 18px;
+            font-weight: bold;
         }
     </style>
-    <title>Login Page</title>
 </head>
 <body>
-    <h1>Log In</h1>
-    <div>
+    <div id="loginBox">
+        <h1>Log In</h1>
         <input type="password" id="passwordInput" placeholder="Enter your password">
+        <div id="message"></div>
     </div>
-    <div id="message"></div>
     <script>
         document.getElementById('passwordInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
-                // You can modify this part based on your web framework to interact with the Python script
                 var userInput = document.getElementById('passwordInput').value;
                 if (userInput) {
                     document.getElementById('message').innerText = "Checking password...";
-                    // You may want to use AJAX or another method to send the user input to the server-side Python script
-                    // For simplicity, you can directly execute the Python script with an XMLHttpRequest
                     var xhr = new XMLHttpRequest();
-                    xhr.open('POST', '/check_password', true);  // Update the URL accordingly
+                    xhr.open('POST', '/check_password', true);
                     xhr.setRequestHeader('Content-Type', 'application/json');
                     xhr.onreadystatechange = function () {
                         if (xhr.readyState == 4 && xhr.status == 200) {
