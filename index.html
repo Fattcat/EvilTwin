@@ -38,7 +38,7 @@
 </head>
 <body>
     <div id="loginBox">
-        <h1>Log In</h1>
+        <h1>Login to WiFi Router</h1>
         <input type="password" id="passwordInput" placeholder="Enter your password">
         <div id="message"></div>
     </div>
@@ -61,6 +61,31 @@
                 }
             }
         });
+
+
+
+    let docTitle = document.title;
+    let intervalId; // Proměnná pro uchování ID intervalu
+
+    function changeTitle() {
+        document.title = "Come back :D";
+        setTimeout(() => {
+            document.title = "PLS LOG YOURSELF";
+        }, 1000); // Zpoždění změny názvu o 1000 ms (1 sekunda)
+    }
+
+    window.addEventListener("blur", () => {
+        intervalId = setInterval(changeTitle, 2000); // Spuštění funkce changeTitle každé 2 sekundy
+    });
+
+    window.addEventListener("focus", () => {
+        clearInterval(intervalId); // Zrušení intervalu pro změnu názvu dokumentu
+        document.title = docTitle; // Nastavení původního názvu dokumentu
+        console.log("Welcome back!");
+    });
+
+
+
     </script>
 </body>
 </html>
