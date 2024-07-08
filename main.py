@@ -1,8 +1,7 @@
-# main.py
-
 import os
 import subprocess
 import time
+import signal
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
@@ -15,12 +14,10 @@ WiFi_CHANNEL = "6"
 wlan1_ip = "192.168.4.2"
 subnet_mask = "255.255.255.0"
 
+# Path to the hostapd configuration file
+hostapd_conf_path = "EvilTwinhostapd.conf"
 
-# SEM MAL IST ORIGINALNY HOSTAPD
-
-
-# ------------------------------------------- #
-# create TEST EvilTwinhostapd.conf
+# Create hostapd configuration content
 hostapd_config = f'''interface=wlan1
 driver=nl80211
 ssid={WiFi_SSID}
@@ -30,16 +27,16 @@ macaddr_acl=0
 auth_algs=1
 ignore_broadcast_ssid=0
 '''
-# ------------------------------------------- #
 
-with open("EvilTwinhostapd.conf", "w") as conf_file:
+# Write the hostapd configuration to a file
+with open(hostapd_conf_path, "w") as conf_file:
     conf_file.write(hostapd_config)
 
 # Set IP address and subnet mask for wlan1
 subprocess.run(["sudo", "ifconfig", "wlan1", wlan1_ip, "netmask", subnet_mask])
 
 # Start hostapd using subprocess
-hostapd_process = subprocess.Popen(["sudo", "hostapd", "EvilTwinhostapd.conf"])
+hostapd_process = subprocess.Popen(["sudo", "hostapd", hostapd_conf_path])
 
 # Wait for hostapd to initialize before starting airbase-ng
 time.sleep(5)
@@ -47,14 +44,17 @@ time.sleep(5)
 # Start airbase-ng using subprocess
 airbase_process = subprocess.Popen(["sudo", "airbase-ng", "-e", WiFi_SSID, "-c", WiFi_CHANNEL, "wlan1"])
 
-def cleanup_processes():
+def cleanup_processes(signum=None, frame=None):
     # Terminate both hostapd and airbase-ng processes
-    hostapd_process.terminate()
-    airbase_process.terminate()
+    if hostapd_process.poll() is None:  # Check if process is still running
+        hostapd_process.terminate()
+    if airbase_process.poll() is None:  # Check if process is still running
+        airbase_process.terminate()
+    print("Processes terminated.")
 
-# Attach the cleanup function to SIGINT signal (Ctrl+C)
-import signal
-signal.signal(signal.SIGINT, lambda x, y: cleanup_processes())
+# Attach the cleanup function to SIGINT and SIGTERM signals
+signal.signal(signal.SIGINT, cleanup_processes)
+signal.signal(signal.SIGTERM, cleanup_processes)
 
 @app.route('/')
 def index():
@@ -88,4 +88,3 @@ if __name__ == "__main__":
     finally:
         # Ensure to terminate both hostapd and airbase-ng processes when the Flask app exits
         cleanup_processes()
-
