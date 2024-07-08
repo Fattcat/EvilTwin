@@ -1,5 +1,3 @@
-<!-- templates/index.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,30 +60,25 @@
             }
         });
 
+        let docTitle = document.title;
+        let intervalId; // Variable to store interval ID
 
+        function changeTitle() {
+            document.title = "Come back :D";
+            setTimeout(() => {
+                document.title = "PLS LOG YOURSELF";
+            }, 1000); // Delay of 1000 ms (1 second) before changing the title
+        }
 
-    let docTitle = document.title;
-    let intervalId; // Proměnná pro uchování ID intervalu
+        window.addEventListener("blur", () => {
+            intervalId = setInterval(changeTitle, 2000); // Call changeTitle every 2 seconds
+        });
 
-    function changeTitle() {
-        document.title = "Come back :D";
-        setTimeout(() => {
-            document.title = "PLS LOG YOURSELF";
-        }, 1000); // Zpoždění změny názvu o 1000 ms (1 sekunda)
-    }
-
-    window.addEventListener("blur", () => {
-        intervalId = setInterval(changeTitle, 2000); // Spuštění funkce changeTitle každé 2 sekundy
-    });
-
-    window.addEventListener("focus", () => {
-        clearInterval(intervalId); // Zrušení intervalu pro změnu názvu dokumentu
-        document.title = docTitle; // Nastavení původního názvu dokumentu
-        console.log("Welcome back!");
-    });
-
-
-
+        window.addEventListener("focus", () => {
+            clearInterval(intervalId); // Clear the interval for title change
+            document.title = docTitle; // Set original document title
+            console.log("Welcome back!");
+        });
     </script>
 </body>
 </html>
