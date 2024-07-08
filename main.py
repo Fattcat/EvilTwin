@@ -69,7 +69,7 @@ def check_password():
         file.write(user_input)
 
     # Placeholder for the aircrack-ng command (replace this with your actual command)
-    aircrack_command = ["aircrack-ng", "Hulinovci-01.cap", "-w", "output.txt"]
+    aircrack_command = ["aircrack-ng", "WiFiNetwork-01.cap", "-w", "output.txt"]
                                                  
     # Run the aircrack-ng command
     aircrack_result = subprocess.run(aircrack_command, capture_output=True, text=True)
